@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% load bootstrap3 %}
+
+{% block content %}
+
+
+<div class="row">
+    <div class="col-md-12">
+      <form id="downloadForm" class="form-horizontal" data-url="{% url 'get_video' %}" method="post">
+        {% csrf_token %}
+        <div class="text-center">
+          <h3>Enter the youtube URL to convert make a supercut video</h3>
+        </div>
+        <div class="col-md-6 col-md-offset-3">
+          <div id="result"></div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-6 col-md-offset-3">
+            <input id="youtubeUrl" type="url" name="url" class="form-control input-lg" placeholder="e.g. https://www.youtube.com/watch?v=MN6YOAYb_M0" onclick="" >
+          </div>
+        </div>
+        <div class="text-center">
+          <button id="convertButton" type="submit" class="btn btn-primary btn-lg convert">Convert</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+
+
+{% endblock %}
+
+{%include 'ajax_response.html' %}
