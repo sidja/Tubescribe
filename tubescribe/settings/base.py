@@ -90,7 +90,7 @@ WSGI_APPLICATION = 'tubescribe.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DATABASE_NAME', 'tubescribe'),
+        'NAME': os.getenv('DATABASE_NAME', 'tubedb'),
         'USER': os.getenv('DATABASE_USER', 'tubescribe'),
         'PASSWORD': os.getenv('DATABASE_PASSWORD', 'password'),
         'HOST': os.getenv('DATABASE_HOST', '127.0.0.1'),
