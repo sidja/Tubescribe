@@ -58,3 +58,8 @@ target/
 
 # PyCharm IDE
 .idea
+
+
+# Media
+
+.mp4
