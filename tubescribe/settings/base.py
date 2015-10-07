@@ -44,7 +44,8 @@ INSTALLED_APPS = (
     'bootstrap3',
 
     # Project apps.
-    #'tubescribe.apps.',
+    'tubescribe.apps.core',
+
 )
 
 MIDDLEWARE_CLASSES = (

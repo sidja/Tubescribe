@@ -6,6 +6,8 @@ from django.conf import settings
 import sys 
 import os
 
+from django.utils.text import slugify
+
 
 
 def download(url):
@@ -23,7 +25,6 @@ def download(url):
 		'outtmpl': output_filepath,
 	}
 	with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-	    #ydl.download(['http://www.youtube.com/watch?v=BaW_jenozKc'])
 	    ydl.download([url])
 
 

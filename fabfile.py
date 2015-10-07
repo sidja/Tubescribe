@@ -1,51 +1,85 @@
 from fabric.api import local
 import os
 
+from fabvenv import virtualenv
+
+from tubescribe.util.fabutil import *
+
+
+from fabric.api import put, run, settings, sudo
+from fabric.operations import prompt
+from fabric.contrib import django
+
+from fabric.api import *
+from fabtools import require
+import fabtools
+
+
+
+env.user						= 'root'
+env.key_filename				= '/home/sid/.ssh/deploy_open_ssh'
+env.VIRTUALENV 					= '/webapps/tubescribe/'
+
+env.roledefs = {
+	'master' : [' 128.199.167.207'],
+	#'staging' : ['1.1.1.1'],
+}
+
+
+
+
+# >>> from fabvenv import virtualenv
+# >>> with virtualenv('/home/me/venv/'):
+# ...     run('python foo')
+
+#@task
+def runremotedev():
+	with virtualenv(env.VIRTUALENV):
+		sudo('echo $PATH')
+		#sudo("python manage.py runserver 128.199.167.207:9000 " \
+		#	"--settings=tubescribe.settings.local")
+
+
+#@task
+def setup_db():
+	""" Install and create PostgresSQL DB and DB user"""
+	
+	# Require a PostgreSQL server
+	require.postgres.server()
+	require.postgres.user('tubescribe', 'password')
+	require.postgres.database('tubedb', 'tubescribe')
+	
+	# psycopg2 does not seem to be working with out this 
+	sudo('apt-get -y install python-psycopg2 libpq-dev python-virtualenv git python-dev', )
+
+
+	# pip install django-braces
+	# pip install youtube-dl
+	# pip install django-bootstrap3
+	# pip install fabric-virtualenv
+	# pip install git+git://github.com/ronnix/fabtools.git
+
+
 
 
 def runlocal():
-
+	""" Run local server """
 	local("python manage.py runserver 128.199.167.207:9000 " \
 		"--settings=tubescribe.settings.local")
+
+
+def runremote():
+	"""  Run remote server """
+
 
 def run():
 	local("python manage.py --settings=tubescribe.settings.local runserver")
 
-def clear_cart_schema():
-	""" Clears intial migrations for existing Cart Schema """
-	mysql_password = os.environ['MYSQL_PASSWORD']
-	shell_command = "mysql -u root --password="
-	
-
-	# Example  for reference 
-	#	local(" mysql -u root --password={password} -e 'show databases;' ".format(password=mysql_password))
-	#	query = "show databases;"
-	#	local("{0}{1} -e '{2}' ".format(shell_command,mysql_password,query))
-	#	local("{0}{1} -e 'use sid;' ".format(shell_command,mysql_password))
-	
-	# 1. 	Empty the django_migrations
-	local("{0}{1} -e 'delete from django_migrations;' sid ".format(shell_command,mysql_password))
-
-	
-
-	# 2. 	Delete  migrations folder (for every app)
-	local("rm -rf cart/migrations/")
-
-	# 3. 	Reset the migrations for the "built-in" apps
-	local("python manage.py migrate --fake")
-
-	# 4. 	For each app run - Take care of dependencies 
-	# 		(models with ForeignKey's should run after their 
-	# 		parent model).
-	local("python manage.py makemigrations cart")
-	
-	# 5. 	Fake intial 
-	local("python manage.py migrate  --fake-initial")
-	
-	#6. 	Finally migrate 
-	local("python manage.py migrate")
 
 
-def migrate_cart():
-	local("python manage.py makemigrations cart")
-	local("python manage.py migrate")
+
+# >>> from fabvenv import virtualenv
+# >>> with virtualenv('/home/me/venv/'):
+# ...     run('python foo')
+
+
