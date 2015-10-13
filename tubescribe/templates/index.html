@@ -9,8 +9,9 @@
     <div class="col-md-12">
       <form id="downloadForm" class="form-horizontal" data-url="{% url 'get_video' %}" method="post">
         {% csrf_token %}
-        <div class="text-center">
-          <h3>Enter the youtube URL to convert make a supercut video</h3>
+        
+        <div id="main" class="text-center">
+          <h3>Enter the youtube URL to convert make a supercut video </h3>
         </div>
         <div class="col-md-6 col-md-offset-3">
           <div id="result"></div>

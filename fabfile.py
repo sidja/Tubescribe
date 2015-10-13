@@ -19,7 +19,7 @@ import fabtools
 env.user						= 'root'
 env.key_filename				= '/home/sid/.ssh/deploy_open_ssh'
 env.VIRTUALENV 					= '/webapps/tubescribe/'
-
+VIRTUALENV 						= '/webapps/tubescribe/'
 env.roledefs = {
 	'master' : [' 128.199.167.207'],
 	#'staging' : ['1.1.1.1'],
@@ -28,19 +28,20 @@ env.roledefs = {
 
 
 
-# >>> from fabvenv import virtualenv
-# >>> with virtualenv('/home/me/venv/'):
-# ...     run('python foo')
-
-#@task
-def runremotedev():
-	with virtualenv(env.VIRTUALENV):
-		sudo('echo $PATH')
-		#sudo("python manage.py runserver 128.199.167.207:9000 " \
-		#	"--settings=tubescribe.settings.local")
 
 
-#@task
+def runlocaldev():
+	#with virtualenv(VIRTUALENV):
+		#sudo('echo $PATH')
+		local("python manage.py runserver 128.199.167.207:9000 " \
+			"--settings=tubescribe.settings.local")
+		
+		d= local("ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'")
+		
+		
+
+		# python manage.py runserver 128.199.167.207:9000 --settings=tubescribe.settings.local
+
 def setup_db():
 	""" Install and create PostgresSQL DB and DB user"""
 	

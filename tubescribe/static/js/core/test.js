@@ -16,17 +16,38 @@ function create_post() {
         // handle a successful response
         success : function(json) {
              $('#post-text').val(''); // remove the value from the input
-            console.log(json); // log the returned json to the console
-             console.log("success"); // another sanity check
-             $('#result').html(JSON.stringify(json));
+            //console.log(json); // log the returned json to the console
+            //console.log(JSON.stringify(json));
+            //console.log("success"); // another sanity check
+            
+            // $('#result').html(JSON.stringify(json));
              var base_url = window.location.origin;
     //           $('#result').html("<video width='320' height='240' controls>"+
 				//   "<source src=' {{ STATIC_URL }}' ' type='video/mp4'>"+
 				// "</video>");
+                
+    			if (json['is_valid'] == 'true')
+                {
 
-    			$('#result').html('<video width="320" height="240" controls>'+
-				  '<source  src="'+base_url+'/static/media/temp.mp4" type="video/mp4">'+
-				'</video>');
+                    var filename = json['filename'];
+                    $('#result1').html('<video width="400" height="300" controls>'+
+                  '<source  src="'+base_url+'/static/media/'+filename+'" type="video/mp4">'+
+                '</video>');
+                $('#result2').html(json);
+                $('#result3').html(JSON.stringify(json));
+
+                }
+                else
+                {
+                    alert(JSON.stringify(json["is_valid"]));
+                    $('#result2').html(json['is_valid']);
+                    $('#result3').html(JSON.stringify(json));
+                   // console.log(JSON.stringify(json["is_valid"]));
+                }
+
+
+                
+
         },
 
         // handle a non-successful response

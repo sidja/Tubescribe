@@ -12,6 +12,7 @@ build/
 develop-eggs/
 dist/
 downloads/
+tubescribe/static/media/
 eggs/
 .eggs/
 lib/

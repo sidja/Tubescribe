@@ -3,7 +3,7 @@ import os
 
 from fabvenv import virtualenv
 
-@task
+
 def clear_cart_schema():
 	""" Clears intial migrations for existing Cart Schema """
 	mysql_password = os.environ['MYSQL_PASSWORD']

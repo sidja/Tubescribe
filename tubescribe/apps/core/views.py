@@ -9,6 +9,8 @@ import json
 
 from utils import download
 from utils import print_http_response
+from utils import MyError, get_client_ip
+from models import ActivityLog, Video
 
 # Create your views here.
 
@@ -81,7 +83,24 @@ class AjaxView(JSONResponseMixin, AjaxResponseMixin, View):
         return url
 
 
+
+
+       # if valid 		--------------------> Check
+ 		# if it does not exist in db
+		  # if duration  (10 min)
+		   # download   --------------------> Check
+		    # slugify	--------------------> Check
+		     # rename	--------------------> Check
+		      # relay file to user
+		       # log in db	
+		        # respond with url
+
+
+
 def create_post(request):
+
+	
+
 	if request.method == 'POST':
 		post_text = request.POST.get('the_post')
 		response_data = {}
@@ -89,23 +108,77 @@ def create_post(request):
 		#post = Post(text=post_text, author=request.user)
 		#post.save()
 
-		response_data['result'] = post_text
+
+		
 		# response_data['postpk'] = "post.pk"
 		# response_data['text'] = "post.text"
 		# response_data['created'] = "post.created.strftime()"
 		# response_data['author'] = "post.author.username"
 
-		download(post_text)
 
-		return HttpResponse(
-		    json.dumps(response_data),
-		    content_type="application/json"
-		)
+		try:
+
+			video = download(post_text)
+
+
+		except MyError as e:
+			
+			details = e.args[0]
+			
+			print details["code"]  
+
+			if details["code"] == "exceeds_max_duration":
+				response_data['is_valid'] = 'false'
+				response_data['result'] = "exceeds max duration"
+
+			elif details["code"] == "invalid_url":
+				response_data['is_valid'] = 'false'
+				response_data['result'] = "invalid url"
+
+		
+
+			return HttpResponse(
+				json.dumps(response_data),
+				content_type="application/json"		
+				)
+
+		
+
+		if isinstance(video["filename"], str) and not video["filename"]:
+			response_data['is_valid'] = 'true'
+			response_data['result'] = post_text
+			response_data['filename'] = video["filename"]
+			response_data['message'] = "all good"
+
+
+			client_ip = get_client_ip(request)
+
+			video = video["id"]
+
+			activity =  ActivityLog.objects.create(
+            video=video["filename"],
+            client_ip=client_ip,
+            action=ActivityLog.DOWNLOAD,
+       )
+
+			activity.save()
+
+		else:
+
+			response_data['is_valid'] = 'true'
+			response_data['result'] = post_text
+			response_data['message'] = "Filename error"
+			response_data['filename'] = video["filename"]
+
 	else:
-		return HttpResponse(
-		    json.dumps({"nothing to see": "this isn't happening"}),
-		    content_type="application/json"
-		)
+		response_data['is_valid'] = 'false'
+		response_data['result'] ="invalid request"
+
+	return HttpResponse(
+				json.dumps(response_data),
+				content_type="application/json"		
+				)
+
 
 
 @print_http_response
